@@ -17,7 +17,7 @@ except FileNotFoundError:
 def join(message):
     if message.from_user.id not in bot_users:
         bot_users[message.from_user.id] = message.from_user.username
-        bot.send_message(message.chat.id, "Hello, it.")
+        bot.send_message(message.chat.id, "Hello, I'm a file sharing bot. Send me any file and i'll provide direct download link to it.")
         # Save the new user to the file
         with open('bot_users.json', 'w') as file:
             json.dump(bot_users, file)
