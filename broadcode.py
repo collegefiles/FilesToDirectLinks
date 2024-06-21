@@ -1,18 +1,26 @@
 import telebot # pip install pyTelegramBotAPI
 import os
+import json
 
 TOKEN = "6816768229:AAGD_PIHTFYuHFrYRuAGJ1DnweFUCyRKh4w" # replace with your bot token
 CHANNEL_ID = "-1002114707908" # replace with your channel ID
 bot = telebot.TeleBot(TOKEN)
 
-# Dictionary to store all bot users
-bot_users = {}
+# Load existing bot users from file
+try:
+    with open('bot_users.json', 'r') as file:
+        bot_users = json.load(file)
+except FileNotFoundError:
+    bot_users = {}
 
 @bot.message_handler(commands=['start', 'join'])
 def join(message):
     if message.from_user.id not in bot_users:
         bot_users[message.from_user.id] = message.from_user.username
-        bot.send_message(message.chat.id, "Hello, I'm a file sharing bot. You can send me any file and I will give you a link to download it.")
+        bot.send_message(message.chat.id, "Hello, it.")
+        # Save the new user to the file
+        with open('bot_users.json', 'w') as file:
+            json.dump(bot_users, file)
     else:
         bot.send_message(message.chat.id, "You are already a bot user.")
 
