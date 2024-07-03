@@ -102,6 +102,31 @@ def get_users(message):
     except Exception as e:
         print(f"Error in get_users: {e}")
 
+@bot.message_handler(commands=['load_users'])
+def load_users(message):
+    try:
+        if message.from_user.id == AUTHORIZED_USER_ID:
+            if message.reply_to_message:
+                user_list = message.reply_to_message.text.split('\n')
+                if user_list and user_list[0].startswith("List of bot users:"):
+                    for user_info in user_list[1:]:
+                        user_info_parts = user_info.split(', ')
+                        if len(user_info_parts) == 2:
+                            user_id = int(user_info_parts[0].split(': ')[1])
+                            username = user_info_parts[1].split(': ')[1][1:]
+                            bot_users[user_id] = username
+                    with open('bot_users.json', 'w') as file:
+                        json.dump(bot_users, file)
+                    bot.send_message(message.chat.id, "Bot users updated successfully.")
+                else:
+                    bot.send_message(message.chat.id, "Invalid user list format.")
+            else:
+                bot.send_message(message.chat.id, "Please reply to a message containing the user list.")
+        else:
+            bot.send_message(message.chat.id, "You are not authorized to use the /load_users command.")
+    except Exception as e:
+        print(f"Error in load_users: {e}")
+
 try:
     bot.polling()
 except Exception as e:
